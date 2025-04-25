@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import obd2 from 'react-native-obd2';
 
+import Inicio from './src/screens/Inicio';
+import Viagem from './src/screens/Viagem';
+
 // Função para solicitar permissões Bluetooth
 async function solicitarPermissoesBluetooth() {
   if (Platform.OS === 'android' && Platform.Version >= 31) {
@@ -75,19 +78,33 @@ export default function App() {
     }
   };
 
-  return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 20 }}>Leitor OBD2</Text>
+  const [telaAtual, setTelaAtual] = useState('Inicio');
 
-      <Text style={{ marginTop: 20 }}>
-        Velocidade: {speed ? `${speed} km/h` : 'Carregando...'}
-      </Text>
+  const goTo = (tela: string) => {
+    setTelaAtual(tela);
+  }
 
-      <Text style={{ marginTop: 10 }}>
-        RPM: {rpm !== null ? `${rpm}` : 'Carregando...'}
-      </Text>
+  switch (telaAtual) {
+    case 'Inicio':
+      return <Inicio goTo={goTo} />;
 
-      <Button title="Iniciar" onPress={iniciar} />
-    </View>
-  );
+    case 'Viagem':
+      return <Viagem goTo={goTo} />
+  }
+
+  // return (
+  //   <View style={{ padding: 20 }}>
+  //     <Text style={{ fontSize: 20 }}>Leitor OBD2</Text>
+
+  //     <Text style={{ marginTop: 20 }}>
+  //       Velocidade: {speed ? `${speed} km/h` : 'Carregando...'}
+  //     </Text>
+
+  //     <Text style={{ marginTop: 10 }}>
+  //       RPM: {rpm !== null ? `${rpm}` : 'Carregando...'}
+  //     </Text>
+
+  //     <Button title="Iniciar" onPress={iniciar} />
+  //   </View>
+  // );
 }
