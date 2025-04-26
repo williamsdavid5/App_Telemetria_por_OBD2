@@ -7,11 +7,13 @@ import Colors from '../utils/Colors';
 export default function Inicio({ mudarTela }: ScreenProps) {
     const [inputValue, setInputValue] = useState('');
     const [erro, setErro] = useState(false); // controla se muda para vermelho
+    const [senhaIncorreta, setSenhaIncorreta] = useState(false);
     const senhaProvisoria = '1234';
 
     const adicionarNumero = (numero: string) => {
         setInputValue((prev) => prev + numero);
         setErro(false)
+        setSenhaIncorreta(false);
     };
 
     const removerUltimoNumero = () => {
@@ -23,6 +25,7 @@ export default function Inicio({ mudarTela }: ScreenProps) {
             mudarTela(Screens.VIAGEM);
         } else {
             setErro(true);
+            setSenhaIncorreta(true);
         }
     };
 
@@ -38,6 +41,9 @@ export default function Inicio({ mudarTela }: ScreenProps) {
                     value={inputValue}
                     editable={false}
                 />
+                {senhaIncorreta &&
+                    (<Text style={[styles.text, { color: Colors.VERMELHO, marginTop: 10, fontWeight: 'bold' }]}>ID incorreto</Text>)
+                }
             </View>
 
             <View style={styles.teclado}>
