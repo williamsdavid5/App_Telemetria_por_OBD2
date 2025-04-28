@@ -3,9 +3,13 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Screens } from '../routes/routes';
 import { ScreenProps } from '../types/ScreeProps';
 import Colors from '../utils/Colors';
+import { useObd } from '../context/ObdContext';
 
+export default function Viagem({ mudarTela }: ScreenProps) {
 
-export default function Viagem({ mudarTela, speed }: ScreenProps) {
+    const { speed } = useObd();
+
+    console.log(speed);
     return (
         <View style={styles.content}>
             <View style={styles.divisaoSuperior}>

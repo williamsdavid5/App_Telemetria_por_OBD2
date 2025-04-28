@@ -3,13 +3,17 @@ import { View, Text, StyleSheet, Pressable, Image, TextInput, Modal } from 'reac
 import { Screens } from '../routes/routes';
 import { ScreenProps } from '../types/ScreeProps';
 import Colors from '../utils/Colors';
+import { useObd } from '../context/ObdContext';
 
-export default function Inicio({ mudarTela, rpm, conexao }: ScreenProps) {
+export default function Inicio({ mudarTela }: ScreenProps) {
     const [inputValue, setInputValue] = useState('');
     const [erro, setErro] = useState(false); // controla se muda para vermelho
-    const [erroConexao, setErroConexao] = useState(false)
     const [senhaIncorreta, setSenhaIncorreta] = useState(false);
     const senhaProvisoria = '1234';
+
+    const { iniciarConexaoOBD, conexao } = useObd();
+
+    iniciarConexaoOBD();
 
     const adicionarNumero = (numero: string) => {
         setInputValue((prev) => prev + numero);
@@ -136,6 +140,9 @@ export default function Inicio({ mudarTela, rpm, conexao }: ScreenProps) {
                                 backgroundColor: Colors.AMARELO
                             }
                         ]}
+
+                            onPress={iniciarConexaoOBD}
+
                         >
                             <Text style={[styles.text, { color: Colors.BRANCO }]}>Já fiz isso</Text>
                         </Pressable>
