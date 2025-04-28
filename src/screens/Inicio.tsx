@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, TextInput, Modal } from 'react-native';
 import { Screens } from '../routes/routes';
 import { ScreenProps } from '../types/ScreeProps';
 import Colors from '../utils/Colors';
 
-export default function Inicio({ mudarTela }: ScreenProps) {
+export default function Inicio({ mudarTela, rpm, conexao }: ScreenProps) {
     const [inputValue, setInputValue] = useState('');
     const [erro, setErro] = useState(false); // controla se muda para vermelho
+    const [erroConexao, setErroConexao] = useState(false)
     const [senhaIncorreta, setSenhaIncorreta] = useState(false);
     const senhaProvisoria = '1234';
 
@@ -112,6 +113,36 @@ export default function Inicio({ mudarTela }: ScreenProps) {
                     </Pressable>
                 </View>
             </View>
+
+            <Modal
+                visible={!conexao}
+                transparent
+            >
+                <View style={styles.modalFundo}>
+                    <View style={styles.modalJanela}>
+                        <Text style={styles.title}>Erro de conexão</Text>
+                        <Text style={[styles.text, { textAlign: 'justify' }]}>Por favor, ative o <Text style={{ fontWeight: 'bold' }}>Bluetooth</Text> do seu celular e conecte com o leitor OBD2.</Text>
+                        <Pressable style={({ pressed }) => [
+                            {
+                                backgroundColor: Colors.PRETO,
+                                borderRadius: 50,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 10,
+                                marginTop: 20
+                            },
+
+                            pressed && {
+                                backgroundColor: Colors.AMARELO
+                            }
+                        ]}
+                        >
+                            <Text style={[styles.text, { color: Colors.BRANCO }]}>Já fiz isso</Text>
+                        </Pressable>
+
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -162,4 +193,16 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         height: 60
     },
+    modalFundo: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    modalJanela: {
+        maxWidth: '90%',
+        backgroundColor: Colors.BRANCO,
+        borderRadius: 20,
+        padding: 20
+    }
 });
