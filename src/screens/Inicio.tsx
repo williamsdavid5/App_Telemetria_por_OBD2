@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Image, TextInput, Modal } from 'react-native';
 import { Screens } from '../routes/routes';
 import { ScreenProps } from '../types/ScreeProps';
@@ -13,7 +13,21 @@ export default function Inicio({ mudarTela }: ScreenProps) {
 
     const { iniciarConexaoOBD, conexao } = useObd();
 
-    iniciarConexaoOBD();
+    useEffect(() => {
+        const conectar = async () => {
+            try {
+                await iniciarConexaoOBD();
+            } catch (error) {
+                console.log("Falha na conexão inicial");
+            }
+        };
+
+        conectar();
+
+        return () => {
+            //logica de dessconexão
+        };
+    }, []);
 
     const adicionarNumero = (numero: string) => {
         setInputValue((prev) => prev + numero);

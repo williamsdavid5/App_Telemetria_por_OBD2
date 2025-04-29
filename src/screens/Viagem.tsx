@@ -7,7 +7,7 @@ import { useObd } from '../context/ObdContext';
 
 export default function Viagem({ mudarTela }: ScreenProps) {
 
-    const { speed } = useObd();
+    const { speed, rpm } = useObd();
 
     console.log(speed);
     return (
@@ -40,7 +40,7 @@ export default function Viagem({ mudarTela }: ScreenProps) {
                     </Text>
                 </View>
 
-                <Text style={[styles.text, styles.auxiliarIndicador]}>Km/h</Text>
+                <Text style={[styles.text, styles.auxiliarIndicador]}>Seu rpm: {rpm}</Text>
                 <Pressable style={styles.botao} onPress={() => mudarTela(Screens.INICIO)}>
                     <Text style={{ color: Colors.BRANCO }}>Encerrar</Text>
                 </Pressable>

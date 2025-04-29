@@ -34,46 +34,79 @@ export function useObd() {
 }
 
 export function ObdProvider({ children }: { children: React.ReactNode }) {
-    const [rpm, setRpm] = useState(null);
-    const [speed, setSpeed] = useState(null);
+    const [rpm, setRpm] = useState<number | null>(null);
+    const [speed, setSpeed] = useState<number | null>(null);
     const [conexao, setConexao] = useState(false);
+    const [statusBluetooth, setStatusBluetooth] = useState('disconnected');
 
     useEffect(() => {
-        const listener = DeviceEventEmitter.addListener('obd2LiveData', (data) => {
-            // console.log('DADOS RECEBIDOS:', data);
-            if (data && typeof data === 'object') {
-                if (data.cmdID === 'ENGINE_RPM') {
-                    setRpm(data.cmdResult);
-                }
-                if (data.cmdID === 'SPEED') {
-                    setSpeed(data.cmdResult);
-                }
-            }
+        // Listener para dados OBD
+        const dataListener = DeviceEventEmitter.addListener('obd2LiveData', (data) => {
 
+            if (data && typeof data === 'object') {
+                console.log(data);
+                if (data.cmdID === 'ENGINE_RPM') setRpm(data.cmdResult);
+                if (data.cmdID === 'SPEED') setSpeed(data.cmdResult);
+            }
         });
 
-        return () => listener.remove();
+        // Listener para status Bluetooth
+        const btStatusListener = DeviceEventEmitter.addListener(
+            'obd2bluetoothStatus',
+            (status) => {
+                console.log('Status Bluetooth:', status.status);
+                setStatusBluetooth(status.status);
+
+                // Atualiza conexao baseado no status
+                if (status.status === 'connected') {
+                    setConexao(true);
+                } else {
+                    setConexao(false);
+                }
+            }
+        );
+
+        // Listener para status OBD2
+        const obdStatusListener = DeviceEventEmitter.addListener(
+            'obd2Status',
+            (status) => {
+                console.log('Status OBD2:', status.status);
+                if (status.status === 'receiving') {
+                    setConexao(true);
+                } else {
+                    setConexao(false);
+                }
+            }
+        );
+
+        return () => {
+            dataListener.remove();
+            btStatusListener.remove();
+            obdStatusListener.remove();
+        };
     }, []);
 
     const iniciarConexaoOBD = async () => {
         try {
-            (obd2 as any).setMockUpMode(true);
+            (obd2 as any).setMockUpMode(false);
             console.log('Modo real ativado');
 
             await solicitarPermissoesBluetooth();
-            obd2.ready();
+            await obd2.ready();
 
             const devices = await obd2.getBluetoothDeviceNameList();
             if (devices.length > 0) {
                 const deviceAddress = devices[0].address;
                 console.log('Conectando ao dispositivo:', deviceAddress);
-                obd2.startLiveData(deviceAddress);
-                setConexao(true);
+                await obd2.startLiveData(deviceAddress);
+                // Não seta conexao como true aqui - aguarda o listener
             } else {
                 console.warn('Nenhum dispositivo Bluetooth encontrado!');
+                setConexao(false);
                 throw new Error('Nenhum dispositivo encontrado');
             }
         } catch (error) {
+            console.error('Erro na conexão OBD:', error);
             setConexao(false);
         }
     };
