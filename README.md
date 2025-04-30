@@ -2,6 +2,8 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 [Esta é a biblioteca usada](https://github.com/JetBridge-io/react-native-obd2) para fazer a conexão com o sensor OBD2.
 
+[Bluetooth classic](https://www.npmjs.com/package/react-native-bluetooth-classic/v/0.10.2)
+
 # Getting Started
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Pressable, Image, TextInput, Modal } from 'react-native';
 import { Screens } from '../routes/routes';
 import { ScreenProps } from '../types/ScreeProps';
 import Colors from '../utils/Colors';
-import { useObd } from '../context/ObdContext';
+import { BluetoothContext } from '../context/BluetoothContext';
 
 export default function Inicio({ mudarTela }: ScreenProps) {
     const [inputValue, setInputValue] = useState('');
@@ -11,12 +11,12 @@ export default function Inicio({ mudarTela }: ScreenProps) {
     const [senhaIncorreta, setSenhaIncorreta] = useState(false);
     const senhaProvisoria = '1234';
 
-    const { iniciarConexaoOBD, conexao } = useObd();
+    const { iniciarConexaoELM327, conexao } = useContext(BluetoothContext);
 
     useEffect(() => {
         const conectar = async () => {
             try {
-                await iniciarConexaoOBD();
+                await iniciarConexaoELM327();
             } catch (error) {
                 console.log("Falha na conexão inicial");
             }
@@ -25,13 +25,13 @@ export default function Inicio({ mudarTela }: ScreenProps) {
         conectar();
 
         return () => {
-            //logica de dessconexão
+            // logica de desconexão se necessário
         };
     }, []);
 
     const adicionarNumero = (numero: string) => {
         setInputValue((prev) => prev + numero);
-        setErro(false)
+        setErro(false);
         setSenhaIncorreta(false);
     };
 
@@ -60,9 +60,11 @@ export default function Inicio({ mudarTela }: ScreenProps) {
                     value={inputValue}
                     editable={false}
                 />
-                {senhaIncorreta &&
-                    (<Text style={[styles.text, { color: Colors.VERMELHO, marginTop: 10, fontWeight: 'bold' }]}>ID incorreto</Text>)
-                }
+                {senhaIncorreta && (
+                    <Text style={[styles.text, { color: Colors.VERMELHO, marginTop: 10, fontWeight: 'bold' }]}>
+                        ID incorreto
+                    </Text>
+                )}
             </View>
 
             <View style={styles.teclado}>
@@ -132,35 +134,29 @@ export default function Inicio({ mudarTela }: ScreenProps) {
                 </View>
             </View>
 
-            <Modal
-                visible={!conexao}
-                transparent
-            >
+            <Modal visible={!conexao} transparent>
                 <View style={styles.modalFundo}>
                     <View style={styles.modalJanela}>
                         <Text style={styles.title}>Erro de conexão</Text>
-                        <Text style={[styles.text, { textAlign: 'justify' }]}>Por favor, ative o <Text style={{ fontWeight: 'bold' }}>Bluetooth</Text> do seu celular e conecte com o leitor OBD2.</Text>
-                        <Pressable style={({ pressed }) => [
-                            {
-                                backgroundColor: Colors.PRETO,
-                                borderRadius: 50,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: 10,
-                                marginTop: 20
-                            },
-
-                            pressed && {
-                                backgroundColor: Colors.AMARELO
-                            }
-                        ]}
-
-                            onPress={iniciarConexaoOBD}
-
+                        <Text style={[styles.text, { textAlign: 'justify' }]}>
+                            Por favor, ative o <Text style={{ fontWeight: 'bold' }}>Bluetooth</Text> do seu celular e conecte com o leitor OBD2.
+                        </Text>
+                        <Pressable
+                            style={({ pressed }) => [
+                                {
+                                    backgroundColor: Colors.PRETO,
+                                    borderRadius: 50,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 10,
+                                    marginTop: 20
+                                },
+                                pressed && { backgroundColor: Colors.AMARELO }
+                            ]}
+                            onPress={iniciarConexaoELM327}
                         >
                             <Text style={[styles.text, { color: Colors.BRANCO }]}>Já fiz isso</Text>
                         </Pressable>
-
                     </View>
                 </View>
             </Modal>
