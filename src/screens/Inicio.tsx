@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Image, TextInput, Modal } from 'reac
 import { Screens } from '../routes/routes';
 import { ScreenProps } from '../types/ScreeProps';
 import Colors from '../utils/Colors';
-import { BluetoothContext } from '../context/BluetoothContext';
+// import { BluetoothContext } from '../context/BluetoothContext';
 
 export default function Inicio({ mudarTela }: ScreenProps) {
     const [inputValue, setInputValue] = useState('');
@@ -11,23 +11,23 @@ export default function Inicio({ mudarTela }: ScreenProps) {
     const [senhaIncorreta, setSenhaIncorreta] = useState(false);
     const senhaProvisoria = '1234';
 
-    const { iniciarConexaoELM327, conexao } = useContext(BluetoothContext);
+    // const { iniciarConexaoELM327, conexao } = useContext(BluetoothContext);
 
-    useEffect(() => {
-        const conectar = async () => {
-            try {
-                await iniciarConexaoELM327();
-            } catch (error) {
-                console.log("Falha na conexão inicial");
-            }
-        };
+    // useEffect(() => {
+    //     const conectar = async () => {
+    //         try {
+    //             await iniciarConexaoELM327();
+    //         } catch (error) {
+    //             console.log("Falha na conexão inicial", error);
+    //         }
+    //     };
 
-        conectar();
+    //     conectar();
 
-        return () => {
-            // logica de desconexão se necessário
-        };
-    }, []);
+    //     return () => {
+    //         // logica de desconexão se necessário
+    //     };
+    // }, []);
 
     const adicionarNumero = (numero: string) => {
         setInputValue((prev) => prev + numero);
@@ -134,7 +134,8 @@ export default function Inicio({ mudarTela }: ScreenProps) {
                 </View>
             </View>
 
-            <Modal visible={!conexao} transparent>
+            {/* modal de conexao quando necessario */}
+            <Modal visible={false} transparent>
                 <View style={styles.modalFundo}>
                     <View style={styles.modalJanela}>
                         <Text style={styles.title}>Erro de conexão</Text>
@@ -153,7 +154,6 @@ export default function Inicio({ mudarTela }: ScreenProps) {
                                 },
                                 pressed && { backgroundColor: Colors.AMARELO }
                             ]}
-                            onPress={iniciarConexaoELM327}
                         >
                             <Text style={[styles.text, { color: Colors.BRANCO }]}>Já fiz isso</Text>
                         </Pressable>
